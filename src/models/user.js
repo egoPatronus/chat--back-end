@@ -41,7 +41,7 @@ userSchema.methods.hashPassword = async function hashPassword() {
 
 userSchema.methods.comparePassword = async function comparePassword(password) {
   try {
-    const doesPasswordMatch = bcrypt.compare(password, this.hash);
+    const doesPasswordMatch = await bcrypt.compare(password, this.hash);
     return doesPasswordMatch;
   } catch (error) {
     return error;
