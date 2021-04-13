@@ -1,6 +1,7 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 const { Server } = require('http');
 
 const Logger = require('./config/logging');
@@ -16,7 +17,11 @@ function bootServer() {
   const app = express();
   app.use(morgan);
   app.use(express.json());
-  app.use(cors({ origin: '*' }));
+  app.use(cookieParser());
+  app.use(cors({
+    origin: 'http://localhost:3000',
+    credentials: true,
+  }));
   app.use('/', router);
 
   const server = new Server(app);

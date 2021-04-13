@@ -10,13 +10,17 @@ module.exports = function AuthController() {
     const { email, password } = request.body;
     try {
       const jwt = await AuthService().login(email, password);
-      response.send(jwt);
+      response.cookie('session_token', jwt, {
+        httpOnly: true,
+        secure: false,
+        path: '/login',
+      }).sendStatus(200);
     } catch (error) {
       if (error.name === 'ValidationError') {
         response.status(401).send(error.message);
       } else {
         Logger.error(error);
-        response.sendStatus(503);
+        response.status(503).send('Something went wrong! Try again later...');
       }
     }
   });

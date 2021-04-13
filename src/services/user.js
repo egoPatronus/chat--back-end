@@ -19,7 +19,7 @@ module.exports = function UserService() {
         const { username, email: userEmail } = user;
         return { username, userEmail };
       }
-      error.message = 'Password does not match';
+      error.message = 'Password is incorrect';
       throw error;
     }
     throw error;
