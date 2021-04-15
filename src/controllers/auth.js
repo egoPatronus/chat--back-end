@@ -10,11 +10,7 @@ module.exports = function AuthController() {
     const { email, password } = request.body;
     try {
       const jwt = await AuthService().login(email, password);
-      response.cookie('session_token', jwt, {
-        httpOnly: true,
-        secure: false,
-        path: '/login',
-      }).sendStatus(200);
+      response.status(200).send(jwt);
     } catch (error) {
       if (error.name === 'ValidationError') {
         response.status(401).send(error.message);
