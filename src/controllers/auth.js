@@ -12,10 +12,11 @@ module.exports = function AuthController() {
       const jwt = await AuthService().login(email, password);
       response.status(200).send(jwt);
     } catch (error) {
-      if (error.name === 'ValidationError') {
+      const { name, message } = error;
+      if (name === 'ValidationError') {
         response.status(401).send(error.message);
       } else {
-        Logger.error(error);
+        Logger.error(`[AUTH] ${name} - ${message}`);
         response.status(503).send('Something went wrong! Try again later...');
       }
     }

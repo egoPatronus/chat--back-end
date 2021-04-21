@@ -8,6 +8,15 @@ module.exports = function UserService() {
     return user;
   }
 
+  // async function contacts(email) {
+  //   try {
+  //     const contacts = await User.find({ email: { $nin: [email] } }).exec();
+  //     return null;
+  //   } catch (error) {
+  //     console.log(error.message);
+  //   }
+  // }
+
   async function validate(userEmail, password) {
     const user = await User.findOne({ email: userEmail }, 'email username hash').exec();
     const error = new Error('User does not exist');
@@ -28,5 +37,6 @@ module.exports = function UserService() {
   return {
     create,
     validate,
+    // contacts,
   };
 };

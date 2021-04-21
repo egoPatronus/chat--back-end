@@ -6,7 +6,8 @@ const { createServer } = require('http');
 
 const Logger = require('./config/logging');
 const morgan = require('./config/morgan');
-const jwtVerify = require('./middlewares/jwt-verify');
+const wsGateway = require('./ws-gateway');
+const jwtValidate = require('./middlewares/jwt-validate');
 const databaseConnection = require('./config/database-connection');
 const router = require('./router');
 
@@ -18,18 +19,18 @@ function bootServer() {
   const app = express();
   app.use(morgan);
   app.use(express.json());
-  app.use(cors({ origin: '*' }));
+  app.use(cors({ origin: 'http://localhost:3000' }));
   app.use('/', router);
 
   const httpServer = createServer(app);
   const ws = new Server(httpServer, {
     cors: {
-      origin: '*',
+      origin: 'http://localhost:3000',
     },
   });
 
-  ws.use(jwtVerify);
-  ws.on('connection', (socket) => console.log(`${socket.id} connected`));
+  ws.use(jwtValidate);
+  ws.on('connection', (socket) => wsGateway(ws, socket));
   httpServer.listen(PORT, () => Logger.debug(`[EXPRESS] Running on port ${PORT}`));
 }
 
