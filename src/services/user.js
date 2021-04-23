@@ -1,4 +1,5 @@
 const User = require('../models/user');
+const Logger = require('../config/logging');
 
 module.exports = function UserService() {
   async function create(email, username, password) {
@@ -8,14 +9,16 @@ module.exports = function UserService() {
     return user;
   }
 
-  // async function contacts(email) {
-  //   try {
-  //     const contacts = await User.find({ email: { $nin: [email] } }).exec();
-  //     return null;
-  //   } catch (error) {
-  //     console.log(error.message);
-  //   }
-  // }
+  async function contacts(email) {
+    try {
+      const userContacts = await User.find({ email: { $nin: [email] } }, 'username email').exec();
+      return userContacts;
+    } catch (error) {
+      const { name, message } = error;
+      Logger.error(`[USER] ${name} - ${message}`);
+      throw error;
+    }
+  }
 
   async function validate(userEmail, password) {
     const user = await User.findOne({ email: userEmail }, 'email username hash').exec();
@@ -25,8 +28,8 @@ module.exports = function UserService() {
     if (user) {
       const doesPasswordMatch = await user.comparePassword(password);
       if (doesPasswordMatch) {
-        const { username, email } = user;
-        return { username, email };
+        const { username, email, _id: id } = user;
+        return { username, email, id };
       }
       error.message = 'Password is incorrect';
       throw error;
@@ -37,6 +40,6 @@ module.exports = function UserService() {
   return {
     create,
     validate,
-    // contacts,
+    contacts,
   };
 };

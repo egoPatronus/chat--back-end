@@ -8,6 +8,7 @@ const Logger = require('./config/logging');
 const morgan = require('./config/morgan');
 const wsGateway = require('./ws-gateway');
 const jwtValidate = require('./middlewares/jwt-validate');
+const joinWsRoom = require('./middlewares/join-ws-room');
 const databaseConnection = require('./config/database-connection');
 const router = require('./router');
 
@@ -30,6 +31,7 @@ function bootServer() {
   });
 
   ws.use(jwtValidate);
+  ws.use(joinWsRoom);
   ws.on('connection', (socket) => wsGateway(ws, socket));
   httpServer.listen(PORT, () => Logger.debug(`[EXPRESS] Running on port ${PORT}`));
 }

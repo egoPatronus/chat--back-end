@@ -35,7 +35,7 @@ userSchema.methods.hashPassword = async function hashPassword() {
     this.hash = hash;
   } catch (error) {
     error.name = 'ValidationError';
-    return error;
+    throw error;
   }
 };
 

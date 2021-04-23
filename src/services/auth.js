@@ -11,6 +11,7 @@ module.exports = function AuthService() {
       });
     });
 
+    // TODO: Missing error treatment
     const token = await result;
     return token;
   }
