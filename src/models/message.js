@@ -17,4 +17,11 @@ const messageSchema = new Schema({
   timestamps: true,
 });
 
+messageSchema.post('save', (doc, next) => {
+  doc
+    .populate({ path: 'sender', select: 'username email' })
+    .execPopulate()
+    .then(() => next());
+});
+
 module.exports = model('Message', messageSchema);

@@ -1,5 +1,7 @@
+/* eslint-disable no-underscore-dangle */
 const Logger = require('../config/logging');
 const User = require('../services/user');
+const Room = require('../services/room');
 
 module.exports = function UserGateway(_ws, socket) {
   Logger.debug(`[SOCKET.IO] user ${socket.user.email} connected`);
@@ -10,14 +12,28 @@ module.exports = function UserGateway(_ws, socket) {
     });
   }
 
+  function parseRecipients(rooms, senderId) {
+    return rooms?.map((room) => {
+      const { users } = room ?? [];
+      const recipient = users.filter(
+        ({ _id: userId }) => userId.toString() !== senderId.toString(),
+      );
+      return { ...room, users: { ...recipient[0] } };
+    });
+  }
+
   async function getProfileData() {
-    const { user } = socket;
+    const { _id: senderId, email } = socket?.user ?? '';
 
     try {
-      const contacts = await User().contacts(user.email);
+      const contacts = await User().contacts(email);
+      const roomsData = await Room().getRooms(senderId);
+      const rooms = parseRecipients(roomsData, senderId);
+
       const profileData = {
-        user,
+        user: socket.user,
         contacts,
+        rooms,
       };
 
       joinContactsRooms(contacts);

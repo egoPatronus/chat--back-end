@@ -7,6 +7,7 @@ module.exports = function databaseConnection() {
   connect(process.env.DATABASE_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
+    useFindAndModify: true,
   }).catch(({ message }) => Logger.error(`[MONGODB]: ${message}`));
 
   const database = connection;

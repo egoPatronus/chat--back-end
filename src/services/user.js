@@ -28,8 +28,8 @@ module.exports = function UserService() {
     if (user) {
       const doesPasswordMatch = await user.comparePassword(password);
       if (doesPasswordMatch) {
-        const { username, email, _id: id } = user;
-        return { username, email, id };
+        const { username, email, _id } = user;
+        return { username, email, _id };
       }
       error.message = 'Password is incorrect';
       throw error;
